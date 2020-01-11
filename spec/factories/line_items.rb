@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :line_item do
     name { "Macbook Pro" }
-    price { 11999 }
+    price { 11_999 }
 
     order
   end

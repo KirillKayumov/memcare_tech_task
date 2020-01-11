@@ -1,7 +1,7 @@
 module V1
   class LineItemsController < ApplicationController
     before_action :load_order
-    before_action :load_line_item, only: %i(show update destroy)
+    before_action :load_line_item, only: %i[show update destroy]
 
     def index
       line_items = @order.line_items.order(:id)

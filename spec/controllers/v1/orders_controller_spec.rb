@@ -32,10 +32,8 @@ describe V1::OrdersController do
       get :show, params: { id: order.id }
 
       expect(response_body).to eq(
-        {
-          "customer_name" => "John",
-          "value" => 0.0
-        }
+        "customer_name" => "John",
+        "value" => 0.0
       )
     end
   end
