@@ -3,38 +3,36 @@ require "rails_helper"
 describe V1::OrdersController do
   let(:response_body) { JSON.parse(response.body) }
 
-  describe "GET #index" do
-    let!(:order_1) { create :order, customer_name: "John", value: 0 }
-    let!(:order_2) { create :order, customer_name: "Chris", value: 5 }
+  describe "POST #create" do
+    let(:params) { { order: { customer_name: "Awesome Customer" } } }
+    let(:created_order) { Order.last }
 
-    it "test" do
-      get :index
+    it "responds with created Order" do
+      expect { post :create, params: params }.to change { Order.count }.from(0).to(1)
 
+      expect(response.status).to eq(201)
       expect(response_body).to eq(
-        [
-          {
-            "customer_name" => "John",
-            "value" => 0.0
-          },
-          {
-            "customer_name" => "Chris",
-            "value" => 5
-          }
-        ]
+        "id" => created_order.id,
+        "customer_name" => "Awesome Customer",
+        "value" => 0.0,
+        "created_at" => created_order.created_at.iso8601,
+        "ordered_line_items" => []
       )
     end
-  end
 
-  describe "GET #show" do
-    let(:order) { create :order, customer_name: "John", value: 0 }
+    context "when params are invalid" do
+      let(:params) { { order: { customer_name: "" } } }
 
-    it "test" do
-      get :show, params: { id: order.id }
+      it "responds with errors" do
+        expect { post :create, params: params }.not_to change { Order.count }
 
-      expect(response_body).to eq(
-        "customer_name" => "John",
-        "value" => 0.0
-      )
+        expect(response.status).to eq(422)
+        expect(response_body).to eq(
+          "errors" => {
+            "customer_name" => ["can't be blank"]
+          }
+        )
+      end
     end
   end
 end

@@ -4,9 +4,7 @@ module V1
     before_action :load_line_item, only: %i[show update destroy]
 
     def index
-      line_items = @order.line_items.order(:id)
-
-      render json: line_items
+      render json: @order.ordered_line_items
     end
 
     def show
