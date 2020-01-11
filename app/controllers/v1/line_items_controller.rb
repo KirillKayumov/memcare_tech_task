@@ -14,25 +14,33 @@ module V1
     end
 
     def create
-      line_item = CreateLineItem.new(params: line_item_params, order: @order).call
+      result = CreateLineItem.call(params: line_item_params, order: @order)
 
-      if line_item.persisted?
-        render json: line_item, status: :created
+      if result.success?
+        render json: result.line_item, status: :created
       else
-        render json: line_item, status: :unprocessable_entity, serializer: ErrorSerializer
+        render json: result.line_item, status: :unprocessable_entity, serializer: ErrorSerializer
       end
     end
 
     def update
-      @line_item.update(line_item_params)
+      result = UpdateLineItem.call(line_item: @line_item, params: line_item_params)
 
-      render json: line_item
+      if result.success?
+        render json: result.line_item
+      else
+        render json: result.line_item, status: :unprocessable_entity, serializer: ErrorSerializer
+      end
     end
 
     def destroy
-      @line_item.destroy!
+      result = DestroyLineItem.call(line_item: @line_item)
 
-      render :no_content
+      if result.success?
+        render json: result.line_item
+      else
+        render json: result.line_item, status: :unprocessable_entity, serializer: ErrorSerializer
+      end
     end
 
     private
